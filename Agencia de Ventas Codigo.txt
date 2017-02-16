@@ -1,0 +1,286 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Design;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Decorator
+{
+    class AgenciaVentas 
+    {
+        static void Main()
+        {
+            Menu();
+
+            Console.ReadKey();
+
+        }
+
+        public static void Menu()
+        {
+            Console.WriteLine("\n Ventas de Seguros");
+            Console.WriteLine("\nTipo de Seguro");
+            Console.WriteLine("1.- SuSalud");
+            Console.WriteLine("2.- ConSalud");
+            Console.WriteLine("3.- MegaSalud");
+            Console.WriteLine("\n Seleccione un Seguro:");
+
+            var opcion = Convert.ToInt32(Console.ReadLine());
+
+            switch (opcion)
+            {
+                case 1:
+                    SuSalud suSalud = new SuSalud();
+                    Console.WriteLine(suSalud.descripcion + " Importe: " + suSalud.valor());
+
+                    Console.WriteLine("\n Paquetes Adicionales");
+                    Console.WriteLine("\n Seleccione un Paquete");
+                    Console.WriteLine("1.- Emergencia Extranjero");
+                    Console.WriteLine("2.- Asistencia Internacional");
+                    Console.WriteLine("3.- Cobertura Medica");
+                    Console.WriteLine("4.- Estudios Diagnosticos");
+                    var opcionSuSalud = Convert.ToInt32(Console.ReadLine());
+                    PaquetesAdicionales(opcionSuSalud, suSalud);
+                    break;
+                case 2:
+                    ConSalud conSalud = new ConSalud();
+                    Console.WriteLine(conSalud.descripcion + " Importe: " + conSalud.valor());
+                    Console.WriteLine("\n Paquetes Adicionales");
+                    Console.WriteLine("\n Seleccione un Paquete");
+                    Console.WriteLine("1.- Emergencia Extranjero");
+                    Console.WriteLine("2.- Asistencia Internacional");
+                    Console.WriteLine("3.- Cobertura Medica");
+                    Console.WriteLine("4.- Estudios Diagnosticos");
+                    var opcionConSalud = Convert.ToInt32(Console.ReadLine());
+                    PaquetesAdicionales(opcionConSalud, conSalud);
+                    break;
+                case 3:
+                    MegaSalud megaSalud = new MegaSalud();
+                    Console.WriteLine(megaSalud.descripcion + " Importe: " + megaSalud.valor());
+                    Console.WriteLine("\n Paquetes Adicionales");
+                    Console.WriteLine("\n Seleccione un Paquete");
+                    Console.WriteLine("1.- Emergencia Extranjero");
+                    Console.WriteLine("2.- Asistencia Internacional");
+                    Console.WriteLine("3.- Cobertura Medica");
+                    Console.WriteLine("4.- Estudios Diagnosticos");
+                    var opcionMegaSalud = Convert.ToInt32(Console.ReadLine());
+                    PaquetesAdicionales(opcionMegaSalud, megaSalud);
+                    break;
+            }
+
+           
+
+            Console.WriteLine("Volver al Menú");
+            Console.WriteLine("1.- Si");
+            Console.WriteLine("2. No");
+            var mostrarMenu = Convert.ToInt32(Console.ReadLine());
+
+            if (mostrarMenu == 1)
+            {
+                Menu();
+            }
+            else
+            {
+                Console.WriteLine("Gracias por usar el sistema");
+            }
+        }
+
+        public static void PaquetesAdicionales(int opcion,Seguros seguro)
+        {
+            switch (opcion)
+            {
+                case 1: EmergenciaExtranjero emergenciaExtranjero = new EmergenciaExtranjero(seguro);
+                    Console.WriteLine("Su Nuevo Plan " + emergenciaExtranjero.GetDescripcion() + " Importe: " + emergenciaExtranjero.valor());
+                    break;
+                case 2:
+                    AsistenciaInternacional asistenciaInternacional = new AsistenciaInternacional(seguro);
+                    Console.WriteLine("Su Nuevo Plan " + asistenciaInternacional.GetDescripcion() + " Importe: " + asistenciaInternacional.valor());
+                    break;
+                case 3:
+                    CoberturaMedicamentos coberturaMedicamentos= new CoberturaMedicamentos(seguro);
+                    Console.WriteLine("Su Nuevo Plan " + coberturaMedicamentos.GetDescripcion() + " Importe: " + coberturaMedicamentos.valor());
+                    break;
+                case 4:
+                    EstudiosDiagnostico estudiosDiagnostico = new EstudiosDiagnostico(seguro);
+                    Console.WriteLine("Su Nuevo Plan " + estudiosDiagnostico.GetDescripcion() + " Importe: " + estudiosDiagnostico.valor());
+                    break;
+            }
+
+        }
+
+    }
+
+    public abstract class Seguros
+    {
+        public String descripcion = "";
+
+        public String GetDescripcion()
+        {
+            return descripcion;
+
+        }
+
+        public abstract int valor();
+    }
+
+    public class SuSalud : Seguros
+    {
+        public SuSalud()
+        {
+            descripcion = "Tipo de Seguro: SuSalud";
+        }
+
+        public override int valor()
+        {
+            return 1500;
+        }
+    }
+
+    public class ConSalud : Seguros
+    {
+        public ConSalud()
+        {
+            descripcion = "Tipo de Seguro: ConSalud";
+        }
+
+        public override int valor()
+        {
+            return 1900;
+        }
+    }
+
+    public class MegaSalud : Seguros
+    {
+        public MegaSalud()
+        {
+            descripcion = "Tipo de Seguro: MegaSalud";
+        }
+
+        public override int valor()
+        {
+            return 2500;
+        }
+    }
+
+    public abstract class AdicionalesDecorator : Seguros
+    {
+        public abstract String GetDescripcion();
+    }
+
+    public class EmergenciaExtranjero : AdicionalesDecorator
+    {
+        private Seguros seguro;
+
+        public EmergenciaExtranjero(Seguros seguro)
+        {
+            this.seguro = seguro;
+        }
+
+        public override String GetDescripcion()
+        {
+            return seguro.GetDescripcion() + ", Atención médica derivada de accidentes fuera del pais";
+        }
+
+        public override int valor()
+        {
+            return 350 + seguro.valor();
+        }
+
+    }
+
+    public class AsistenciaInternacional : AdicionalesDecorator
+    {
+        private Seguros seguro;
+
+        public AsistenciaInternacional(Seguros seguro)
+        {
+            this.seguro = seguro;
+        }
+
+        public override String GetDescripcion()
+        {
+            return seguro.GetDescripcion() + ", Asistencia telefonica y asesoria para diferentes tramites y servicios cuando el asegurado esta a mas de 100 km de su lugar de residencia";
+        }
+
+        public override int valor()
+        {
+            return 700 + seguro.valor();
+        }
+
+    }
+
+    public class CoberturaMedicamentos : AdicionalesDecorator
+    {
+        private Seguros seguro;
+
+        public CoberturaMedicamentos(Seguros seguro)
+        {
+            this.seguro = seguro;
+        }
+
+        public override String GetDescripcion()
+        {
+            if (seguro.valor() == 1500)
+            {
+                return seguro.GetDescripcion() + ", !!! No puede contratar paquete adicional !!!";
+            }
+            else
+            {
+                return seguro.GetDescripcion() + ",  Medicamentos derivados de consulta hasta el limite contratado";
+            }
+  
+        }
+
+        public override int valor()
+        {
+            if (seguro.valor() == 1500)
+            {
+                return seguro.valor();
+            }
+            else
+            {
+                return 1200 + seguro.valor();
+            }
+           
+        }
+
+    }
+
+    public class EstudiosDiagnostico : AdicionalesDecorator
+    {
+        private Seguros seguro;
+
+        public EstudiosDiagnostico(Seguros seguro)
+        {
+            this.seguro = seguro;
+        }
+
+        public override String GetDescripcion()
+        {
+            if (seguro.valor() == 1500)
+            {
+                return seguro.GetDescripcion() + ", !!! No puede contratar paquete adicional !!!";
+            }
+            else
+            {
+                return seguro.GetDescripcion() + ",  Estudios de labooratorio derivados de consultas";
+            }
+
+        }
+
+        public override int valor()
+        {
+            if (seguro.valor() == 1500)
+            {
+                return seguro.valor();
+            }
+            else
+            {
+                return 1200 + seguro.valor();
+            }
+
+        }
+
+    }
+}
